@@ -1,0 +1,105 @@
+#### general settings
+name: unet_standard_condition
+use_tb_logger: true
+model: gan_singleD_ref
+distortion: none
+scale: 1
+gpu_ids: [0]
+ref: true
+use_gan: true
+gan_type: gan  # gan | ragan | wgan
+#### datasets
+datasets:
+  train:
+    name: Mixed_LOL690_BrightTrain_MITfiveK
+    mode: LQGT_ref
+    dataroot_GT: ~
+    dataroot_ref: ~
+    dataroot_LQ: ~
+
+    use_shuffle: true
+    n_workers: 4
+    batch_size: 1
+    color: RGB
+    resize_to_500: true
+
+  val:
+    name: LOL
+    mode: LQGT_ref_n
+    dataroot_GT: LOL690-789/high/
+    dataroot_ref: FlickrDIV2K/HR/
+    dataroot_LQ: LOL690-789/low/
+    n_refs: 10 # number of reference images 
+    ref_cri: random  # mse_GT  color_condition  niqe  random
+    resize_ref_to_500: true
+
+#### network structures
+condition_nf: 32
+
+network_G: 
+  which_model_G: unet
+  in_nc: 3
+  out_nc: 3
+  base_nf: 3
+
+network_C: 
+  which_model_C: CondNet
+  in_nc: 3
+
+network_D:
+  which_model_D: patchgan
+  nf: 32
+
+#### path
+path:
+  root: 
+  pretrain_model_G: ~
+  pretrain_model_C: ~
+  pretrain_model_D_H:~
+  strict_load: true
+  resume_state: ~ #
+#### training settings: learning rate scheme, loss
+train:
+  lr_G: !!float 3e-5   # !!float 4e-5  for batchsize=1
+  beta1_G: 0.9
+  beta2_G: 0.99
+  lr_C: !!float 3e-5   # !!float 4e-5  for batchsize=1
+  weight_decay_C: 0
+  beta1_C: 0.9
+  beta2_C: 0.99
+  lr_D: !!float 3e-5   # !!float 4e-5  for batchsize=1
+  weight_decay_D: 0
+  beta1_D: 0.9
+  beta2_D: 0.99
+  niter: 400000
+  warmup_iter: -1  # no warm up
+  lr_scheme: MultiStepLR # MultiStepLR | CosineAnnealingLR_Restart
+  lr_steps: [10000, 40000, 80000, 200000]
+  lr_gamma: 0.5
+
+  pixel_criterion: smoothl1
+  pixel_weight: !!float 1e0
+  cross_weight: !!float 0e-3 # !!float 1e-3 (l1)    !!float 5e-3 (l2)  
+  spa_weight: !!float 3e0   # !!float 8e-1 for pooled version
+  spa_kernel: 5 
+  color_weight: !!float 2e-3
+  cond_code_weight: !!float 0 # !!float 1e-1
+  cond_dis_weight: !!float 0
+  feature_criterion: l1
+  feature_weight: !!float 0e-4
+  tv_weight: !!float 0e-3  # !!float 1e-3    tried !!float 1e-2
+  gan_weight: !!float 3.5e-2
+  gan_pair_weight: !!float 0e-2
+  
+  G_update_ratio: 1
+  G_init_iters: !!float 0e3
+  D_update_ratio: 1
+  D_init_iters: !!float 0e3
+
+  manual_seed: 10
+  val_freq: !!float 1e3
+
+#### logger`
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 1e3

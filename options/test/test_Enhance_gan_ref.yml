@@ -1,0 +1,45 @@
+#### general settings
+name: unet_standard_condition
+use_tb_logger: true
+suffix: ~  # add suffix to saved images
+model: gan_singleD_ref
+distortion: none
+scale: 1
+gpu_ids: [0]
+ref: true
+gan_type: gan  # gan | ragan | wgan
+
+datasets:
+  val:
+    name: LOL_690
+    mode: LQGT_ref_n
+    dataroot_GT: ~
+    dataroot_ref: ~
+    dataroot_LQ: ~
+    n_refs: 100
+    ref_cri: niqe  # mse_GT  color_condition  niqe  random
+    manual_seed: 7
+    resize_ref_to_500: true
+
+#### network structures
+condition_nf: 32
+
+network_G:
+  which_model_G: unet
+  in_nc: 3
+  out_nc: 3
+  base_nf: 3
+
+network_C: 
+  which_model_C: CondNet
+  in_nc: 3
+
+#### path
+path:
+  root: 
+  pretrain_model_G: ckpt/models_G.pth
+  pretrain_model_C: ckpt/models_C.pth
+  strict_load: true
+  results_root: results/
+  # 14000!
+  #d6 d4
