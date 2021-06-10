@@ -1,5 +1,9 @@
 # ImageEnhance_cGAN
 Pytorch implementation of "Enhance Image as You Like with Unpaired Learning" (IJCAI 2021)
+
+[[arXiv]](https://github.com/sxpro/ImageEnhance_cGAN/edit/main/README.md)
+[[Poster]](https://github.com/sxpro/ImageEnhance_cGAN/blob/main/assert/%5BIJCAI2021_Poster%5D%2BEnhance.pdf)
+
 ## Citation
 If you find the code helpful in your resarch or work, please cite the following papers.
 ```
